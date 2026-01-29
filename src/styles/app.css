@@ -197,6 +197,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: var(--text-primary);
 }
 
 .panel-header {
@@ -508,6 +509,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: var(--text-primary);
 }
 
 .inspector-empty {
@@ -604,6 +606,7 @@ body {
   background: var(--bg-elevated);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
 }
 
 .property-name {
@@ -709,6 +712,7 @@ body {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   margin-bottom: 12px;
+  color: var(--text-primary);
 }
 
 .binding-source {
@@ -888,6 +892,15 @@ body {
   width: 90%;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+}
+
+.modal-content h2 {
+  color: var(--text-primary);
+}
+
+.modal-content p {
+  color: var(--text-secondary);
 }
 
 .modal-header {
@@ -924,6 +937,7 @@ body {
   background: var(--bg-elevated);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
 }
 
 .feature-icon {
