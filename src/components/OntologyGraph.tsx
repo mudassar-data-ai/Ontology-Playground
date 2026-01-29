@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import cytoscape from 'cytoscape';
 import type { Core, EventObject } from 'cytoscape';
 import { useAppStore } from '../store/appStore';
@@ -23,10 +23,14 @@ export function OntologyGraph() {
     darkMode
   } = useAppStore();
   
-  // Theme-aware colors
-  const themeColors = darkMode 
+  // Theme-aware colors - memoized to prevent unnecessary re-renders
+  const themeColors = useMemo(() => darkMode 
     ? { nodeText: '#B3B3B3', edgeColor: '#505050', edgeText: '#808080' }
-    : { nodeText: '#2A2A2A', edgeColor: '#888888', edgeText: '#555555' };
+    : { nodeText: '#2A2A2A', edgeColor: '#888888', edgeText: '#555555' },
+  [darkMode]);
+
+  // Initial theme colors for graph creation
+  const initialThemeColors = useRef(themeColors);
 
   // Build graph elements from ontology
   const buildElements = useCallback(() => {
@@ -75,7 +79,7 @@ export function OntologyGraph() {
             'font-size': '14px',
             'font-family': 'Segoe UI, sans-serif',
             'font-weight': 600,
-            'color': themeColors.nodeText,
+            'color': initialThemeColors.current.nodeText,
             'text-margin-y': 10,
             'width': 70,
             'height': 70,
@@ -121,12 +125,12 @@ export function OntologyGraph() {
             'label': 'data(label)',
             'font-size': '12px',
             'font-family': 'Segoe UI, sans-serif',
-            'color': themeColors.edgeText,
+            'color': initialThemeColors.current.edgeText,
             'text-rotation': 'autorotate',
             'text-margin-y': -10,
             'width': 3,
-            'line-color': themeColors.edgeColor,
-            'target-arrow-color': themeColors.edgeColor,
+            'line-color': initialThemeColors.current.edgeColor,
+            'target-arrow-color': initialThemeColors.current.edgeColor,
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'transition-property': 'width, line-color, target-arrow-color',
@@ -225,7 +229,24 @@ export function OntologyGraph() {
       cy.destroy();
       cyRef.current = null;
     };
-  }, [buildElements, selectEntity, selectRelationship, activeQuest, currentStepIndex, advanceQuestStep, darkMode, themeColors]);
+  }, [buildElements, selectEntity, selectRelationship, activeQuest, currentStepIndex, advanceQuestStep]);
+
+  // Update graph colors when theme changes (without recreating graph)
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy || isDestroyedRef.current) return;
+
+    cy.style()
+      .selector('node')
+      .style({ 'color': themeColors.nodeText })
+      .selector('edge')
+      .style({
+        'color': themeColors.edgeText,
+        'line-color': themeColors.edgeColor,
+        'target-arrow-color': themeColors.edgeColor
+      })
+      .update();
+  }, [themeColors]);
 
   // Handle selection changes
   useEffect(() => {
