@@ -7,6 +7,7 @@ import { ZoomIn, ZoomOut, Maximize2, RotateCcw } from 'lucide-react';
 export function OntologyGraph() {
   const cyRef = useRef<Core | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isDestroyedRef = useRef(false);
   
   const {
     currentOntology,
@@ -217,16 +218,19 @@ export function OntologyGraph() {
     });
 
     cyRef.current = cy;
+    isDestroyedRef.current = false;
 
     return () => {
+      isDestroyedRef.current = true;
       cy.destroy();
+      cyRef.current = null;
     };
   }, [buildElements, selectEntity, selectRelationship, activeQuest, currentStepIndex, advanceQuestStep, darkMode, themeColors]);
 
   // Handle selection changes
   useEffect(() => {
     const cy = cyRef.current;
-    if (!cy) return;
+    if (!cy || isDestroyedRef.current) return;
 
     cy.elements().removeClass('highlighted dimmed');
     cy.elements().unselect();
@@ -260,7 +264,7 @@ export function OntologyGraph() {
   // Handle highlights from queries
   useEffect(() => {
     const cy = cyRef.current;
-    if (!cy) return;
+    if (!cy || isDestroyedRef.current) return;
 
     cy.elements().removeClass('highlighted');
 
@@ -276,7 +280,7 @@ export function OntologyGraph() {
   // Graph controls
   const handleZoomIn = () => {
     const cy = cyRef.current;
-    if (cy) {
+    if (cy && !isDestroyedRef.current) {
       cy.zoom(cy.zoom() * 1.3);
       cy.center();
     }
@@ -284,7 +288,7 @@ export function OntologyGraph() {
 
   const handleZoomOut = () => {
     const cy = cyRef.current;
-    if (cy) {
+    if (cy && !isDestroyedRef.current) {
       cy.zoom(cy.zoom() / 1.3);
       cy.center();
     }
@@ -292,14 +296,14 @@ export function OntologyGraph() {
 
   const handleFit = () => {
     const cy = cyRef.current;
-    if (cy) {
+    if (cy && !isDestroyedRef.current) {
       cy.fit(undefined, 60);
     }
   };
 
   const handleReset = () => {
     const cy = cyRef.current;
-    if (cy) {
+    if (cy && !isDestroyedRef.current) {
       cy.layout({
         name: 'cose',
         idealEdgeLength: () => 180,
