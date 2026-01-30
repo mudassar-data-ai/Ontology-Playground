@@ -190,6 +190,29 @@ body {
   color: var(--text-primary);
 }
 
+/* Header Text Button */
+.header-text-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.header-text-btn:hover {
+  background: var(--ms-blue);
+  border-color: var(--ms-blue);
+  color: white;
+}
+
 /* Left Panel - Quest Panel */
 .quest-panel {
   background: var(--bg-secondary);

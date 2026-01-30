@@ -43,8 +43,9 @@ export function Header({ onHelpClick, onDataSourcesClick, onImportExportClick, o
       </div>
 
       <div className="header-actions">
-        <button className="icon-btn" onClick={onSummaryClick} title="View Ontology Summary">
-          <FileText size={20} />
+        <button className="header-text-btn" onClick={onSummaryClick} title="View Ontology Summary">
+          <FileText size={16} />
+          <span>Summary</span>
         </button>
         <button className="icon-btn" onClick={onNLBuilderClick} title="Build from Description">
           <Sparkles size={20} />
