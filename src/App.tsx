@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { 
   Header, 
@@ -16,6 +16,9 @@ import {
   Toast
 } from './components';
 import { useAppStore } from './store/appStore';
+import { useRoute } from './hooks/useRoute';
+import { navigate } from './lib/router';
+import type { Catalogue } from './types/catalogue';
 import './styles/app.css';
 
 const AI_BUILDER_ENABLED = import.meta.env.VITE_ENABLE_AI_BUILDER === 'true';
@@ -25,15 +28,16 @@ const NLBuilderModal = AI_BUILDER_ENABLED
   : null;
 
 function App() {
+  const route = useRoute();
+
   const [showWelcome, setShowWelcome] = useState(true);
   const [showHelp, setShowHelp] = useState(false);
   const [showDataSources, setShowDataSources] = useState(false);
   const [showImportExport, setShowImportExport] = useState(false);
-  const [showGallery, setShowGallery] = useState(false);
   const [showNLBuilder, setShowNLBuilder] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [toast, setToast] = useState<{ message: string; icon: string } | null>(null);
-  const { darkMode, earnedBadges } = useAppStore();
+  const { darkMode, earnedBadges, loadOntology } = useAppStore();
 
   // Show toast when a new badge is earned
   useEffect(() => {
@@ -49,13 +53,50 @@ function App() {
     }
   }, [earnedBadges.length]);
 
+  // Deep-link: /#/catalogue/<id> — load a specific ontology from the catalogue
+  useEffect(() => {
+    if (route.page === 'catalogue' && route.ontologyId) {
+      const id = route.ontologyId;
+      fetch(`${import.meta.env.BASE_URL}catalogue.json`)
+        .then((res) => {
+          if (!res.ok) throw new Error(`Failed to load catalogue (${res.status})`);
+          return res.json() as Promise<Catalogue>;
+        })
+        .then((data) => {
+          const entry = data.entries.find((e) => e.id === id);
+          if (entry) {
+            loadOntology(entry.ontology, entry.bindings);
+            // Navigate to home now that the ontology is loaded
+            navigate({ page: 'home' });
+          } else {
+            // Unknown ontology id — show the gallery so the user can pick
+            // (route stays at /#/catalogue/<id> which maps to showGallery)
+          }
+        })
+        .catch(() => {
+          // On error, fall through to gallery view
+        });
+    }
+  }, [route, loadOntology]);
+
+  // Derive gallery visibility from route
+  const showGallery = route.page === 'catalogue';
+
+  const closeGallery = useCallback(() => {
+    navigate({ page: 'home' });
+  }, []);
+
+  const openGallery = useCallback(() => {
+    navigate({ page: 'catalogue' });
+  }, []);
+
   return (
     <div className={`app-container ${darkMode ? '' : 'light-theme'}`}>
       <Header 
         onHelpClick={() => setShowHelp(true)} 
         onDataSourcesClick={() => setShowDataSources(true)}
         onImportExportClick={() => setShowImportExport(true)}
-        onGalleryClick={() => setShowGallery(true)}
+        onGalleryClick={openGallery}
         onNLBuilderClick={AI_BUILDER_ENABLED ? () => setShowNLBuilder(true) : undefined}
         onSummaryClick={() => setShowSummary(true)}
       />
@@ -84,7 +125,7 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showGallery && <GalleryModal onClose={() => setShowGallery(false)} />}
+        {showGallery && <GalleryModal onClose={closeGallery} />}
       </AnimatePresence>
 
       {AI_BUILDER_ENABLED && NLBuilderModal && (

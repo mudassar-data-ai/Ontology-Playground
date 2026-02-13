@@ -215,13 +215,13 @@ tutorials, docs) — similar to how CodePen or GitHub Gist embeds work.
 These enhance the overall experience for a community learning resource.
 
 ### 5.1 Deep linking / URL routing
-- [ ] Add client-side routing (e.g., lightweight hash-based router)
-- [ ] Support routes:
+- [x] Add client-side routing (e.g., lightweight hash-based router)
+- [x] Support routes:
   - `/#/` — home (current default ontology)
   - `/#/catalogue` — opens gallery
   - `/#/catalogue/<ontology-id>` — loads and displays a specific ontology
   - `/#/embed/<ontology-id>` — full-page embed view (useful for iframes)
-- [ ] Shareable URLs: loading the app with a route pre-selects the ontology
+- [x] Shareable URLs: loading the app with a route pre-selects the ontology
 
 ### 5.2 Ontology diffing
 - [ ] When loading a new ontology, optionally show a diff view:
