@@ -146,7 +146,7 @@ into a static JSON file.
 - [ ] Consider also accepting GitHub Gist URLs in `metadata.json`
   (`"source": "gist:<gist-id>"`) and fetching them at build time
   (optional, evaluate complexity vs. value)
-- [ ] **RDF validation in CI** — use `npm run validate` (backed by
+- [x] **RDF validation in CI** — use `npm run validate` (backed by
   `scripts/validate-rdf.ts`) in a GitHub Actions step to gate community
   PRs. The script already validates all catalogue RDF files and can
   validate specific files via `npm run validate -- path/to/file.rdf`.
@@ -162,7 +162,7 @@ into a static JSON file.
 - [x] Show author + contributor info for community ontologies
 - [x] Add "View RDF source" button for each ontology (links to the raw file
   in the repo or displays inline)
-- [ ] Add pagination or virtual scroll if the catalogue grows large
+- [x] Add pagination or virtual scroll if the catalogue grows large
 
 ---
 

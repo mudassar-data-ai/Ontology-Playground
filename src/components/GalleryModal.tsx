@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Layers, ArrowRight, Search, Code, User } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
@@ -24,6 +24,7 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [rdfViewId, setRdfViewId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(12);
 
   // Load catalogue.json
   useEffect(() => {
@@ -68,6 +69,18 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
       return true;
     });
   }, [catalogue, searchQuery, sourceFilter, categoryFilter]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [searchQuery, sourceFilter, categoryFilter]);
+
+  const visibleEntries = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
+  const hasMore = visibleCount < filtered.length;
+
+  const handleShowMore = useCallback(() => {
+    setVisibleCount((c) => c + 12);
+  }, []);
 
   const handleLoadOntology = (entry: CatalogueEntry) => {
     loadOntology(entry.ontology, entry.bindings);
@@ -182,10 +195,18 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
           </div>
         )}
 
+        {/* Result count */}
+        {!loading && !error && filtered.length > 0 && (
+          <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 8 }}>
+            Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} ontolog{filtered.length === 1 ? 'y' : 'ies'}
+          </div>
+        )}
+
         {/* Gallery Grid */}
         {!loading && !error && (
+          <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
-            {filtered.map((entry) => {
+            {visibleEntries.map((entry) => {
               const isActive = currentOntology.name === entry.ontology.name;
               const categoryColor = CATEGORY_COLORS[entry.category] ?? '#6B7280';
               const showRdf = rdfViewId === entry.id;
@@ -391,6 +412,19 @@ export function GalleryModal({ onClose }: GalleryModalProps) {
               );
             })}
           </div>
+
+          {hasMore && (
+            <div style={{ textAlign: 'center', marginTop: 16 }}>
+              <button
+                className="btn btn-secondary"
+                style={{ padding: '8px 24px', fontSize: 13 }}
+                onClick={handleShowMore}
+              >
+                Show more ({filtered.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
+          </>
         )}
 
         {/* Footer */}
