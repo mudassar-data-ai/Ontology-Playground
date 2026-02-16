@@ -1,9 +1,9 @@
-import { useEffect, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import type { Core, EventObject } from 'cytoscape';
 import { useAppStore } from '../store/appStore';
-import { ZoomIn, ZoomOut, Maximize2, RotateCcw } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize2, RotateCcw, Pause, Play } from 'lucide-react';
 
 // Register fcose layout
 cytoscape.use(fcose);
@@ -12,6 +12,9 @@ export function OntologyGraph() {
   const cyRef = useRef<Core | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const animationFrameRef = useRef<number | null>(null);
+  const nodeVelocitiesRef = useRef<Map<string, { vx: number; vy: number }>>(new Map());
   
   // Helper to safely get cytoscape instance - returns null if destroyed
   const getCy = useCallback(() => {
@@ -416,6 +419,80 @@ export function OntologyGraph() {
     }
   };
 
+  // Animation logic
+  const initializeNodeVelocities = useCallback(() => {
+    const cy = getCy();
+    if (!cy) return;
+    
+    const velocities = new Map<string, { vx: number; vy: number }>();
+    cy.nodes().forEach(node => {
+      // Random velocity between -0.3 and 0.3 pixels per frame
+      velocities.set(node.id(), {
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6
+      });
+    });
+    nodeVelocitiesRef.current = velocities;
+  }, [getCy]);
+
+  const animateNodes = useCallback(() => {
+    const cy = getCy();
+    if (!cy || !isAnimating) return;
+
+    try {
+      const nodes = cy.nodes();
+      const extent = cy.extent();
+      const padding = 100;
+
+      nodes.forEach(node => {
+        const velocity = nodeVelocitiesRef.current.get(node.id());
+        if (!velocity) return;
+
+        const pos = node.position();
+        let newX = pos.x + velocity.vx;
+        let newY = pos.y + velocity.vy;
+
+        // Bounce off boundaries with some padding
+        if (newX <= extent.x1 + padding || newX >= extent.x2 - padding) {
+          velocity.vx *= -1;
+          newX = pos.x + velocity.vx;
+        }
+        if (newY <= extent.y1 + padding || newY >= extent.y2 - padding) {
+          velocity.vy *= -1;
+          newY = pos.y + velocity.vy;
+        }
+
+        node.position({ x: newX, y: newY });
+      });
+
+      animationFrameRef.current = requestAnimationFrame(animateNodes);
+    } catch {
+      // Graph may have been destroyed
+    }
+  }, [getCy, isAnimating]);
+
+  // Start/stop animation
+  useEffect(() => {
+    if (isAnimating) {
+      initializeNodeVelocities();
+      animateNodes();
+    } else if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [isAnimating, animateNodes, initializeNodeVelocities]);
+
+  const toggleAnimation = () => {
+    setIsAnimating(!isAnimating);
+  };
+
   return (
     <div className="graph-container">
       <div ref={containerRef} className="graph-canvas" />
@@ -429,6 +506,9 @@ export function OntologyGraph() {
         </button>
         <button className="graph-control-btn" onClick={handleFit} title="Fit to View">
           <Maximize2 size={18} />
+        </button>
+        <button className="graph-control-btn" onClick={toggleAnimation} title={isAnimating ? "Stop Animation" : "Start Animation"}>
+          {isAnimating ? <Pause size={18} /> : <Play size={18} />}
         </button>
         <button className="graph-control-btn" onClick={handleReset} title="Reset Layout">
           <RotateCcw size={18} />
