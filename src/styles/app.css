@@ -1063,20 +1063,24 @@ body {
 }
 
 @media (max-width: 900px) {
+  /* Switch from CSS grid to flexbox on mobile — much more reliable across
+     iOS Safari, Chrome mobile, and various viewport quirks. */
   .app-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: 56px 1fr auto;
+    display: flex;
+    flex-direction: column;
     height: 100vh;
     height: 100dvh;
   }
-  
+
+  .header {
+    flex-shrink: 0;
+    height: 56px;
+    padding: 0 12px;
+  }
+
   .quest-panel,
   .right-sidebar {
     display: none;
-  }
-
-  .header {
-    padding: 0 12px;
   }
 
   .header-stats {
@@ -1091,19 +1095,20 @@ body {
     display: flex;
   }
 
-  /* Mobile bottom tabs */
-  .mobile-panel-tabs {
-    display: flex;
-    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* Graph must not overflow its grid cell */
+  /* Graph fills space between header and bottom tabs */
   .graph-container {
+    flex: 1;
     min-height: 0;
     overflow: hidden;
   }
 
-  /* Graph fills available space */
+  /* Mobile bottom tabs */
+  .mobile-panel-tabs {
+    display: flex;
+    flex-shrink: 0;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+  }
+
   .graph-legend {
     display: none;
   }
