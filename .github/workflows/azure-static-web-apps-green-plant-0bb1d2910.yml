@@ -32,6 +32,8 @@ jobs:
           api_location: "" # Api disabled — AI builder is behind VITE_ENABLE_AI_BUILDER flag
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+        env:
+          VITE_GITHUB_CLIENT_ID: ${{ secrets.VITE_GITHUB_CLIENT_ID }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
