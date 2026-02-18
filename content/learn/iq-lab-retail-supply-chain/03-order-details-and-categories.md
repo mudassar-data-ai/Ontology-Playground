@@ -1,5 +1,5 @@
 ---
-title: "Step 2: Order Details & Categories"
+title: Order Details & Categories
 slug: order-details-and-categories
 description: Add OrderLine as a linking entity between Order and Product, and introduce ProductCategory for grouping.
 order: 3

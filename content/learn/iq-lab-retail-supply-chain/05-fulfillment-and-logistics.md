@@ -1,5 +1,5 @@
 ---
-title: "Step 4: Fulfillment & Logistics"
+title: Fulfillment & Logistics
 slug: fulfillment-and-logistics
 description: Add Shipment, Carrier, and Warehouse to model the delivery pipeline — how orders move from warehouse to customer.
 order: 5

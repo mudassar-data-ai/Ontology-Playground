@@ -1,5 +1,5 @@
 ---
-title: "Step 6: Complete Model"
+title: Complete Model
 slug: complete-model
 description: Add Promotion and Return to finish the full 15-entity retail supply chain ontology — then explore the complete graph.
 order: 7

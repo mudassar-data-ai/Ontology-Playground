@@ -1,5 +1,5 @@
 ---
-title: "Step 1: Core Commerce"
+title: Core Commerce
 slug: core-commerce
 description: Define Customer, Order, and Product — the three foundational entities of any retail ontology — and connect them with relationships.
 order: 2

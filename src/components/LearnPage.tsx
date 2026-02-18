@@ -169,7 +169,7 @@ function CourseDetail({ course }: { course: LearnCourse }) {
             onClick={() => navigate({ page: 'learn', courseSlug: course.slug, articleSlug: a.slug })}
           >
             <span className="learn-card-order">
-              {course.type === 'lab' ? `Step ${a.order}` : a.order}
+              {course.type === 'lab' ? (a.order === 1 ? 'Overview' : `Step ${a.order - 1}`) : a.order}
             </span>
             <h2>{a.title}</h2>
             <p>{a.description}</p>

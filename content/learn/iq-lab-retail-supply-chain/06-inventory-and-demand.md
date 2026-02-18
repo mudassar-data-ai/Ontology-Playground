@@ -1,5 +1,5 @@
 ---
-title: "Step 5: Inventory & Demand"
+title: Inventory & Demand
 slug: inventory-and-demand
 description: Add Inventory, Forecast, and DemandSignal to track stock levels and predict future demand across warehouses and regions.
 order: 6

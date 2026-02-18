@@ -1,5 +1,5 @@
 ---
-title: "Step 3: Geography"
+title: Geography
 slug: geography
 description: Model Region and Store to add geographic structure — where orders are fulfilled and where stores are located.
 order: 4

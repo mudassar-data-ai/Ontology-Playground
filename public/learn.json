@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T16:55:28.245Z",
+  "generatedAt": "2026-02-18T17:11:44.932Z",
   "courses": [
     {
       "slug": "iq-lab-retail-supply-chain",
@@ -17,7 +17,7 @@
         },
         {
           "slug": "core-commerce",
-          "title": "\"Step 1: Core Commerce\"",
+          "title": "Core Commerce",
           "description": "Define Customer, Order, and Product — the three foundational entities of any retail ontology — and connect them with relationships.",
           "order": 2,
           "embed": "official/iq-lab-retail-step-1",
@@ -25,7 +25,7 @@
         },
         {
           "slug": "order-details-and-categories",
-          "title": "\"Step 2: Order Details & Categories\"",
+          "title": "Order Details & Categories",
           "description": "Add OrderLine as a linking entity between Order and Product, and introduce ProductCategory for grouping.",
           "order": 3,
           "embed": "official/iq-lab-retail-step-2",
@@ -33,7 +33,7 @@
         },
         {
           "slug": "geography",
-          "title": "\"Step 3: Geography\"",
+          "title": "Geography",
           "description": "Model Region and Store to add geographic structure — where orders are fulfilled and where stores are located.",
           "order": 4,
           "embed": "official/iq-lab-retail-step-3",
@@ -41,7 +41,7 @@
         },
         {
           "slug": "fulfillment-and-logistics",
-          "title": "\"Step 4: Fulfillment & Logistics\"",
+          "title": "Fulfillment & Logistics",
           "description": "Add Shipment, Carrier, and Warehouse to model the delivery pipeline — how orders move from warehouse to customer.",
           "order": 5,
           "embed": "official/iq-lab-retail-step-4",
@@ -49,7 +49,7 @@
         },
         {
           "slug": "inventory-and-demand",
-          "title": "\"Step 5: Inventory & Demand\"",
+          "title": "Inventory & Demand",
           "description": "Add Inventory, Forecast, and DemandSignal to track stock levels and predict future demand across warehouses and regions.",
           "order": 6,
           "embed": "official/iq-lab-retail-step-5",
@@ -57,7 +57,7 @@
         },
         {
           "slug": "complete-model",
-          "title": "\"Step 6: Complete Model\"",
+          "title": "Complete Model",
           "description": "Add Promotion and Return to finish the full 15-entity retail supply chain ontology — then explore the complete graph.",
           "order": 7,
           "embed": "official/iq-lab-retail-step-6",
