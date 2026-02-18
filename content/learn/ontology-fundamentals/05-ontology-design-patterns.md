@@ -59,7 +59,7 @@ Wrong cardinality leads to wrong aggregations. Ask yourself: "For one instance o
 - An order is placed at **one** store → many-to-one
 - A student can take **many** courses, and a course has **many** students → many-to-many
 
-<ontology-embed id="official/healthcare" height="400px" />
+<ontology-embed id="official/healthcare" height="400px"></ontology-embed>
 
 *The Healthcare ontology is a good study in cardinality: a patient has many appointments, but each appointment has one provider. A diagnosis belongs to one patient but may be linked to many prescriptions.*
 
@@ -89,3 +89,12 @@ Every entity type, property, and relationship can have an optional **description
 - Model relationships with names, not foreign key columns
 - Set cardinality correctly to enable proper aggregations
 - Add descriptions where names are ambiguous
+
+```quiz
+Q: A Person entity has properties salary, patientId, courseGrade, and accountBalance. What design pattern should you apply?
+- Add an identifier property
+- Merge all properties into a description field
+- Split into separate entity types (Employee, Patient, Student, Customer) and relate them [correct]
+- Remove all but one property to keep it simple
+> When an entity accumulates unrelated properties, it becomes a "god entity". The fix is to separate each concept into its own entity type and link them with relationships where needed.
+```

@@ -54,7 +54,7 @@ Products rarely exist in isolation — they belong to **categories** like "froze
 
 ## The graph at Step 2
 
-<ontology-embed id="official/iq-lab-retail-step-2" diff="official/iq-lab-retail-step-1" height="400px" />
+<ontology-embed id="official/iq-lab-retail-step-2" diff="official/iq-lab-retail-step-1" height="400px"></ontology-embed>
 
 *Five entity types connected by five relationships. OrderLine acts as a bridge between Order and Product, carrying quantity data. ProductCategory groups products.*
 
@@ -64,5 +64,14 @@ Products rarely exist in isolation — they belong to **categories** like "froze
 - When a relationship needs its own data, model it as an entity
 - **Hierarchies** (Product → ProductCategory) enable roll-up queries
 - The graph is growing — each new entity connects to existing ones
+
+```quiz
+Q: When should you introduce a linking entity (like OrderLine) instead of a direct relationship?
+- When you have more than three entity types
+- When the relationship between two entities needs its own attributes [correct]
+- When both entity types have identifier properties
+- When the entities are in different namespaces
+> A linking entity is needed when a many-to-many relationship needs to carry its own data (like quantity or line total). A direct relationship cannot hold attributes.
+```
 
 Next, we'll add geographic structure with Region and Store.

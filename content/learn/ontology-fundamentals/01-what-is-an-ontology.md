@@ -30,7 +30,7 @@ Without an ontology, your data is just tables and columns. With one, a system ca
 
 This is the foundation of **semantic data models**: instead of writing SQL by hand, you describe what you want in plain language and the system uses the ontology to generate the right query.
 
-<ontology-embed id="official/cosmic-coffee" height="400px" />
+<ontology-embed id="official/cosmic-coffee" height="400px"></ontology-embed>
 
 *The Cosmic Coffee Company ontology above models a coffee shop chain. Click any node to inspect its properties, or click an edge to see the relationship details.*
 
@@ -44,5 +44,23 @@ Ontologies are typically represented in **RDF/OWL** — an XML-based standard fo
 - It's a schema, not data — it describes the shape, not the content
 - It enables semantic querying: ask questions in natural language, get structured answers
 - The standard format is **RDF/OWL**, but you can also work with JSON representations
+
+```quiz
+Q: Which of the following is NOT a building block of an ontology?
+- Entity type
+- Property
+- SQL query [correct]
+- Relationship
+> Ontologies are built from entity types, properties, and relationships. SQL queries are how you retrieve data — they are not part of the ontology definition itself.
+```
+
+```quiz
+Q: What is the purpose of an identifier property?
+- To store the entity's colour
+- To uniquely distinguish each instance of an entity [correct]
+- To connect two entities together
+- To define the data format
+> An identifier property (like a customer ID) uniquely identifies each instance within an entity type, allowing the system to count, group, and join correctly.
+```
 
 Ready to see how RDF works under the hood? Continue to the next article.

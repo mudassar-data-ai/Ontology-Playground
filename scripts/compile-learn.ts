@@ -19,8 +19,71 @@
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { marked } from 'marked';
+import { marked, type Tokens } from 'marked';
 import type { LearnArticle, LearnCourse, LearnManifest } from '../src/types/learn.js';
+
+// ------------------------------------------------------------------
+// Quiz block renderer — converts ```quiz fenced blocks to data divs
+// ------------------------------------------------------------------
+
+/** Parse a ```quiz code block into a JSON-serialisable quiz object.
+ *
+ * Syntax:
+ *   Q: Question text here
+ *   - Option A
+ *   - Option B [correct]
+ *   - Option C
+ *   > Explanation shown after answering.
+ */
+interface QuizOption {
+  text: string;
+  correct: boolean;
+}
+interface QuizData {
+  question: string;
+  options: QuizOption[];
+  explanation: string;
+}
+
+function parseQuizBlock(raw: string): QuizData {
+  const lines = raw.split('\n').map((l) => l.trim()).filter(Boolean);
+  let question = '';
+  const options: QuizOption[] = [];
+  const explanationLines: string[] = [];
+
+  for (const line of lines) {
+    if (line.startsWith('Q:')) {
+      question = line.slice(2).trim();
+    } else if (line.startsWith('- ')) {
+      const isCorrect = line.endsWith('[correct]');
+      const text = isCorrect ? line.slice(2, -9).trim() : line.slice(2).trim();
+      options.push({ text, correct: isCorrect });
+    } else if (line.startsWith('>')) {
+      explanationLines.push(line.slice(1).trim());
+    }
+  }
+
+  if (!question) throw new Error('Quiz block missing "Q:" question line');
+  if (options.length < 2) throw new Error('Quiz block needs at least 2 options');
+  if (!options.some((o) => o.correct)) throw new Error('Quiz block needs at least one [correct] option');
+
+  return { question, options, explanation: explanationLines.join(' ') };
+}
+
+/** Custom marked renderer that converts ```quiz blocks into data divs */
+const quizRenderer = {
+  code(token: Tokens.Code): string | false {
+    if (token.lang !== 'quiz') return false;
+    const quiz = parseQuizBlock(token.text);
+    // Encode as HTML-safe JSON in a data attribute
+    const json = JSON.stringify(quiz).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    // Include visible fallback text so quiz is visible even before JS hydration
+    const escapedQ = quiz.question.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    return `<div class="quiz-block" data-quiz="${json}"><p class="quiz-fallback">&#x2753; ${escapedQ}</p></div>\n`;
+  },
+};
+
+marked.use({ renderer: quizRenderer });
 
 const ROOT = join(import.meta.dirname, '..');
 const CONTENT_DIR = join(ROOT, 'content', 'learn');

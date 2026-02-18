@@ -81,7 +81,7 @@ Choosing the right cardinality ensures that queries like "How many orders did ea
 
 With just three entities and two relationships, we already have a connected graph:
 
-<ontology-embed id="official/iq-lab-retail-step-1" height="350px" />
+<ontology-embed id="official/iq-lab-retail-step-1" height="350px"></ontology-embed>
 
 *Customer, Order, and Product connected by two relationships. This is the foundation everything else builds on.*
 
@@ -91,5 +91,14 @@ With just three entities and two relationships, we already have a connected grap
 - Use business-meaningful names, not internal column names
 - Relationships have cardinality that affects how data is counted
 - Even three entities create a useful connected graph
+
+```quiz
+Q: A Customer can place many Orders, but each Order belongs to one Customer. What cardinality is this?
+- One-to-one
+- Many-to-many
+- One-to-many [correct]
+- Many-to-one
+> From Customer's perspective this is one-to-many: one customer can have many orders. From Order's perspective it's many-to-one. The relationship is defined as Customer → Order with one-to-many cardinality.
+```
 
 Next, we'll add detail to orders and organize products into categories.

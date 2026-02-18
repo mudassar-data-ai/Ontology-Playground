@@ -234,6 +234,7 @@ function ArticleView({
   // Hydrate embed slots with real ontology data
   useEffect(() => {
     if (!contentRef.current) return;
+
     const slots = contentRef.current.querySelectorAll<HTMLElement>('.learn-embed-slot');
     if (slots.length === 0) return;
 
@@ -286,10 +287,7 @@ function ArticleView({
           <span>Present</span>
         </button>
       </div>
-      <article className="learn-article-content" ref={contentRef}>
-        <h1>{article.title}</h1>
-        <div dangerouslySetInnerHTML={{ __html: article.html }} />
-      </article>
+      <ArticleContent article={article} contentRef={contentRef} />
       {presenting && (
         <PresentationMode
           article={article}
@@ -338,60 +336,204 @@ function ArticleView({
 }
 
 // -------------------------------------------------------------------
+// Article content — renders HTML segments with inline quiz components
+// -------------------------------------------------------------------
+
+function ArticleContent({
+  article,
+  contentRef,
+}: {
+  article: LearnArticle;
+  contentRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const segments = useMemo(() => splitArticleSegments(article.html), [article.html]);
+
+  return (
+    <article className="learn-article-content" ref={contentRef}>
+      <h1>{article.title}</h1>
+      {segments.map((seg, i) =>
+        seg.type === 'quiz' ? (
+          <QuizSlide quiz={seg.quiz} key={`quiz-${i}`} />
+        ) : (
+          <div key={`content-${i}`} dangerouslySetInnerHTML={{ __html: seg.html }} />
+        ),
+      )}
+    </article>
+  );
+}
+
+// -------------------------------------------------------------------
+// Quiz React component – pure React, no DOM manipulation
+// -------------------------------------------------------------------
+
+export interface QuizOption { text: string; correct: boolean }
+export interface QuizData { question: string; options: QuizOption[]; explanation: string }
+
+const LETTERS = 'ABCDEFGHIJ';
+
+export function QuizSlide({ quiz }: { quiz: QuizData }) {
+  const [answered, setAnswered] = useState<number | null>(null);
+  const chose = answered !== null;
+  const isCorrect = chose && quiz.options[answered].correct;
+
+  return (
+    <div className="quiz-block quiz-interactive">
+      <div className="quiz-header">
+        <span className="quiz-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <span className="quiz-question">{quiz.question}</span>
+      </div>
+      <div className="quiz-options">
+        {quiz.options.map((opt, i) => {
+          let cls = 'quiz-option';
+          if (chose) {
+            if (opt.correct) cls += ' quiz-option--correct';
+            else if (i === answered) cls += ' quiz-option--wrong';
+            else cls += ' quiz-option--dimmed';
+          }
+          return (
+            <button
+              key={i}
+              className={cls}
+              disabled={chose}
+              onClick={() => setAnswered(i)}
+            >
+              <span className="quiz-option-letter">{LETTERS[i]}</span>
+              <span className="quiz-option-text">{opt.text}</span>
+            </button>
+          );
+        })}
+      </div>
+      {chose && (
+        <div className={`quiz-result ${isCorrect ? 'quiz-result--correct' : 'quiz-result--wrong'}`}>
+          {isCorrect
+            ? <><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Correct!</>
+            : <><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Not quite</>}
+        </div>
+      )}
+      {chose && quiz.explanation && (
+        <div className="quiz-explanation">{quiz.explanation}</div>
+      )}
+    </div>
+  );
+}
+
+// -------------------------------------------------------------------
 // Presentation mode — splits article HTML into slides at <h2> boundaries
 // -------------------------------------------------------------------
 
+export type Slide = { type: 'content'; html: string } | { type: 'quiz'; quiz: QuizData };
+
+/** Extract QuizData from a quiz-block element's data-quiz attribute.
+ *  The attribute value is HTML-entity-encoded JSON. */
+export function extractQuizData(el: HTMLElement): QuizData | null {
+  const raw = el.getAttribute('data-quiz');
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as QuizData;
+  } catch {
+    return null;
+  }
+}
+
 /** Split compiled HTML into slides. Each <h2> starts a new slide.
  *  Content before the first <h2> becomes the title slide.
- *  An <hr> within a section also creates an additional split. */
-function splitIntoSlides(html: string, title: string): string[] {
+ *  An <hr> within a section also creates an additional split.
+ *  A .quiz-block div gets its own dedicated quiz slide. */
+export function splitIntoSlides(html: string, title: string): Slide[] {
   const container = document.createElement('div');
   container.innerHTML = html;
-  const slides: string[] = [];
+  const slides: Slide[] = [];
   let currentSlide = document.createElement('div');
 
-  // Title slide gets the article's h1
   const titleSlide = document.createElement('div');
   titleSlide.innerHTML = `<h1>${title}</h1>`;
+
+  const flushContent = (content: string) => {
+    if (!content) return;
+    if (slides.length === 0) {
+      titleSlide.innerHTML += content;
+    } else {
+      slides.push({ type: 'content', html: content });
+    }
+  };
+
+  const ensureTitleFlushed = () => {
+    if (slides.length === 0) {
+      slides.push({ type: 'content', html: titleSlide.innerHTML });
+    }
+  };
 
   for (const child of Array.from(container.childNodes)) {
     const el = child as HTMLElement;
     if (el.nodeType === Node.ELEMENT_NODE && el.tagName === 'H2') {
-      // Flush the current slide
-      const content = currentSlide.innerHTML.trim();
-      if (content) {
-        if (slides.length === 0) {
-          // Prepend title to content before first h2
-          titleSlide.innerHTML += content;
-        } else {
-          slides.push(content);
-        }
-      }
-      if (slides.length === 0) {
-        slides.push(titleSlide.innerHTML);
-      }
-      // Start new slide with this h2
+      flushContent(currentSlide.innerHTML.trim());
+      ensureTitleFlushed();
       currentSlide = document.createElement('div');
       currentSlide.appendChild(el.cloneNode(true));
     } else if (el.nodeType === Node.ELEMENT_NODE && el.tagName === 'HR') {
-      // <hr> forces a slide split within a section
       const content = currentSlide.innerHTML.trim();
-      if (content) slides.push(content);
+      if (content) slides.push({ type: 'content', html: content });
+      currentSlide = document.createElement('div');
+    } else if (
+      el.nodeType === Node.ELEMENT_NODE &&
+      el.classList?.contains('quiz-block')
+    ) {
+      flushContent(currentSlide.innerHTML.trim());
+      ensureTitleFlushed();
+      const quiz = extractQuizData(el);
+      if (quiz) {
+        slides.push({ type: 'quiz', quiz });
+      }
       currentSlide = document.createElement('div');
     } else {
       currentSlide.appendChild(el.cloneNode(true));
     }
   }
-  // Flush remaining content
   const remaining = currentSlide.innerHTML.trim();
-  if (remaining) slides.push(remaining);
+  if (remaining) {
+    if (slides.length === 0) {
+      // No h2 found — prepend title
+      slides.push({ type: 'content', html: `<h1>${title}</h1>${remaining}` });
+    } else {
+      slides.push({ type: 'content', html: remaining });
+    }
+  }
 
-  // Edge case: no h2 elements at all — wrap everything as a single slide
   if (slides.length === 0) {
-    slides.push(`<h1>${title}</h1>${html}`);
+    slides.push({ type: 'content', html: `<h1>${title}</h1>${html}` });
   }
 
   return slides;
+}
+
+/** Extract quiz data from all quiz-block divs in an HTML string.
+ *  Returns alternating content/quiz segments for inline rendering. */
+export function splitArticleSegments(html: string): Slide[] {
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  const segments: Slide[] = [];
+  let current = document.createElement('div');
+
+  for (const child of Array.from(container.childNodes)) {
+    const el = child as HTMLElement;
+    if (
+      el.nodeType === Node.ELEMENT_NODE &&
+      el.classList?.contains('quiz-block')
+    ) {
+      const content = current.innerHTML.trim();
+      if (content) segments.push({ type: 'content', html: content });
+      const quiz = extractQuizData(el);
+      if (quiz) segments.push({ type: 'quiz', quiz });
+      current = document.createElement('div');
+    } else {
+      current.appendChild(el.cloneNode(true));
+    }
+  }
+  const remaining = current.innerHTML.trim();
+  if (remaining) segments.push({ type: 'content', html: remaining });
+  return segments;
 }
 
 function PresentationMode({
@@ -421,6 +563,7 @@ function PresentationMode({
     }
     return 0;
   });
+  const currentSlide = slides[slideIndex];
   const [presenterDark, setPresenterDark] = useState(initialDarkMode);
   const slideRef = useRef<HTMLDivElement>(null);
 
@@ -463,6 +606,7 @@ function PresentationMode({
   // Hydrate ontology embeds when slide changes
   useEffect(() => {
     if (!slideRef.current) return;
+
     const placeholders = slideRef.current.querySelectorAll('ontology-embed');
     for (const el of placeholders) {
       const id = el.getAttribute('id');
@@ -531,12 +675,18 @@ function PresentationMode({
         </button>
 
         <div className="presentation-slide-wrapper">
-          <div
-            ref={slideRef}
-            className="presentation-slide learn-article-content"
-            key={slideIndex}
-            dangerouslySetInnerHTML={{ __html: slides[slideIndex] }}
-          />
+          {currentSlide.type === 'quiz' ? (
+            <div className="presentation-slide learn-article-content" key={slideIndex}>
+              <QuizSlide quiz={currentSlide.quiz} key={`quiz-${slideIndex}`} />
+            </div>
+          ) : (
+            <div
+              ref={slideRef}
+              className="presentation-slide learn-article-content"
+              key={slideIndex}
+              dangerouslySetInnerHTML={{ __html: currentSlide.html }}
+            />
+          )}
         </div>
 
         <button

@@ -72,7 +72,7 @@ A single graph traversal from Carrier through Shipment to Order to Customer answ
 
 ## The graph at Step 4
 
-<ontology-embed id="official/iq-lab-retail-step-4" diff="official/iq-lab-retail-step-3" height="450px" />
+<ontology-embed id="official/iq-lab-retail-step-4" diff="official/iq-lab-retail-step-3" height="450px"></ontology-embed>
 
 *Ten entity types forming a rich connected graph. Shipment links the logistics layer (Carrier, Warehouse) to the commerce layer (Order, Customer). You can traverse from any warehouse to any customer through the graph.*
 
@@ -82,5 +82,14 @@ A single graph traversal from Carrier through Shipment to Order to Customer answ
 - The logistics layer extends the commerce layer — no need to modify existing entities
 - Graph traversal makes cross-domain queries natural: "Which warehouses ship to the southwest region?" requires no SQL joins
 - The ontology is now 10 entities with 10 relationships — growing but still readable
+
+```quiz
+Q: What role does the Shipment entity play in the ontology?
+- It replaces the Order entity
+- It acts as a hub connecting the logistics layer to the commerce layer [correct]
+- It stores customer addresses
+- It defines the cardinality between Warehouse and Carrier
+> Shipment is a hub entity that connects multiple domains: it links Order to the logistics infrastructure (Carrier, Warehouse), enabling cross-domain queries without modifying existing entities.
+```
 
 Next, we'll add inventory tracking and demand forecasting.

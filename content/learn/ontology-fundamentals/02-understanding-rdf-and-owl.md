@@ -69,7 +69,7 @@ Here's a minimal ontology with one entity type and one property:
 
 The Ontology Playground can import files like this directly — or you can design visually and export to RDF.
 
-<ontology-embed id="official/ecommerce" height="400px" />
+<ontology-embed id="official/ecommerce" height="400px"></ontology-embed>
 
 *The E-Commerce ontology shows a richer example with multiple entity types and object properties connecting them.*
 
@@ -90,3 +90,21 @@ The Ontology Playground supports both formats: design in the visual editor, expo
 - OWL adds classes, data properties, and object properties on top of RDF
 - Namespaces keep URIs short and unambiguous
 - The Playground imports and exports standard RDF/OWL — no hand-coding required
+
+```quiz
+Q: In RDF, information is expressed as:
+- Tables with rows and columns
+- JSON key-value pairs
+- Subject → predicate → object triples [correct]
+- Binary data streams
+> RDF uses triples — three-part statements where a subject is connected to an object through a predicate — to describe information as a graph of connected resources.
+```
+
+```quiz
+Q: What does owl:ObjectProperty represent?
+- A property with a primitive value like a string
+- A relationship between two entity types [correct]
+- The namespace of an ontology
+- A constraint on data types
+> In OWL, an ObjectProperty defines a relationship between two classes (entity types), such as "placedBy" connecting Order to Customer. DatatypeProperty is used for primitive values.
+```

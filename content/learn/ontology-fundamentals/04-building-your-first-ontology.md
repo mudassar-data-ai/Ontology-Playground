@@ -70,7 +70,7 @@ Click the **Validate** button in the toolbar. If everything is correct, you'll s
 
 Click the **RDF** tab in the preview pane. You'll see the live RDF/OWL output with syntax highlighting. This is the exact file that tools like Fabric IQ consume.
 
-<ontology-embed id="official/cosmic-coffee" height="400px" />
+<ontology-embed id="official/cosmic-coffee" height="400px"></ontology-embed>
 
 *The Cosmic Coffee ontology was built using the same workflow. Your Library ontology will look similar — entities as colourful nodes, relationships as directed edges.*
 
@@ -95,3 +95,12 @@ You have three options:
 - Relationships connect entities with a name and cardinality
 - The live graph and RDF previews give instant feedback as you design
 - Export to RDF for Fabric IQ, or submit directly to the community catalogue
+
+```quiz
+Q: Why is the borrowedBy relationship between Book and Member set to many-to-many?
+- A book can only be borrowed once
+- Each member borrows exactly one book at a time
+- A book can be borrowed by many members over time, and a member can borrow many books [correct]
+- Many-to-many is the default cardinality for all relationships
+> A single book can be borrowed by different members at different times, and each member can borrow multiple books simultaneously — this bidirectional multiplicity is what makes it many-to-many.
+```

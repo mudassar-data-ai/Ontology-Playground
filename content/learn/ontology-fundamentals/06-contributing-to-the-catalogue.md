@@ -74,7 +74,7 @@ Once merged, the build pipeline:
 2. Deploys the updated site — your ontology appears in the [Gallery](#/catalogue)
 3. It's immediately available for embedding, deep-linking, and loading in the playground
 
-<ontology-embed id="official/university" height="400px" />
+<ontology-embed id="official/university" height="400px"></ontology-embed>
 
 *The University System ontology is one of the official catalogue entries. Community contributions follow the same format — your ontology will look just like this in the gallery.*
 
@@ -91,3 +91,12 @@ Once merged, the build pipeline:
 - Each submission needs an RDF file and a `metadata.json`
 - CI validates your RDF automatically — fix any errors before the review
 - Merged ontologies appear in the live catalogue immediately after deployment
+
+```quiz
+Q: What two files must every catalogue contribution include?
+- ontology.json and README.md
+- schema.rdf and config.yaml
+- ontology.rdf and metadata.json [correct]
+- index.html and style.css
+> Each catalogue entry requires an ontology.rdf file (the RDF/OWL ontology) and a metadata.json file (name, description, category, and tags for the catalogue listing).
+```

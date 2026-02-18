@@ -76,7 +76,7 @@ The ontology **unifies all of these** under a single connected graph. A query li
 
 ## The graph at Step 5
 
-<ontology-embed id="official/iq-lab-retail-step-5" diff="official/iq-lab-retail-step-4" height="450px" />
+<ontology-embed id="official/iq-lab-retail-step-5" diff="official/iq-lab-retail-step-4" height="450px"></ontology-embed>
 
 *Thirteen entity types. Inventory links Product to Warehouse. DemandSignal connects Product to Region. The graph now spans commerce, logistics, and planning domains.*
 
@@ -86,5 +86,14 @@ The ontology **unifies all of these** under a single connected graph. A query li
 - **Inventory** is a classic intersection entity — it sits between Product and Warehouse
 - **DemandSignal** connects to both Product and Region, enabling cross-dimensional analysis
 - Cross-source unification is the core value proposition — one model, multiple data engines
+
+```quiz
+Q: Why is Inventory called an "intersection entity"?
+- It stores more data than other entities
+- It sits between Product and Warehouse, representing stock of a specific product at a specific location [correct]
+- It has the most relationships in the ontology
+- It is the only entity sourced from Eventhouse
+> Inventory intersects Product and Warehouse — each inventory record answers "how much of Product X is at Warehouse Y?", making it a classic intersection (or junction) entity.
+```
 
 One more step: we'll add Promotion and Return to complete the picture.

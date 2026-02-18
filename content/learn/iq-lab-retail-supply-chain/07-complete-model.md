@@ -50,7 +50,7 @@ Three final relationships:
 
 ## The complete graph
 
-<ontology-embed id="official/iq-lab-retail-step-6" diff="official/iq-lab-retail-step-5" height="500px" />
+<ontology-embed id="official/iq-lab-retail-step-6" diff="official/iq-lab-retail-step-5" height="500px"></ontology-embed>
 
 *The complete retail supply chain ontology: 15 entity types, 18 relationships. Every entity connects to at least one other, forming a rich, traversable graph.*
 
@@ -101,5 +101,14 @@ Over six steps, we progressively constructed a complete ontology:
 4. **Cross-source unification** is the core value — one ontology, multiple data engines
 5. **Graph traversal** replaces complex SQL joins with intuitive path patterns
 6. **The ontology is the API** — GQL queries and Data Agent questions both follow the same structure
+
+```quiz
+Q: In the complete retail ontology, how would you express the query "Which promotions drove returns?" as a graph traversal?
+- Customer → Order → Product → Promotion
+- Promotion → Product ← Return [correct]
+- Return → Order → Customer → Promotion
+- Promotion → Return → Product
+> The path Promotion → Product ← Return follows the PromotionForProduct and ReturnOfProduct relationships, connecting promotions to returned products through their shared Product entity.
+```
 
 You've completed the IQ Lab: Retail Supply Chain. Load any step ontology from the [catalogue](#/catalogue) to explore it interactively in the playground.

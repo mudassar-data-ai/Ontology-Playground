@@ -53,7 +53,7 @@ Notice the pattern: **Store** → **Region** forms a **geographic hierarchy**. I
 
 ## The graph at Step 3
 
-<ontology-embed id="official/iq-lab-retail-step-3" diff="official/iq-lab-retail-step-2" height="400px" />
+<ontology-embed id="official/iq-lab-retail-step-3" diff="official/iq-lab-retail-step-2" height="400px"></ontology-embed>
 
 *Seven entity types. Region and Store add geographic context. Notice how Order now connects to both Customer (who bought) and Region (where it was fulfilled).*
 
@@ -63,5 +63,14 @@ Notice the pattern: **Store** → **Region** forms a **geographic hierarchy**. I
 - **Boolean properties** (like `coldChainRequired`) capture business rules
 - **Hierarchies** allow data to roll up from granular to aggregate
 - An entity can have multiple relationships to different entities — Order connects to Customer, Product (via OrderLine), and Region
+
+```quiz
+Q: Why is it useful to model Region as a separate entity instead of adding a "region" text property on Store?
+- It saves storage space
+- It enables roll-up queries and maintains a single source of truth for geographic data [correct]
+- It makes the ontology diagram look better
+- Fabric IQ requires it
+> Modelling Region as a separate entity creates a hierarchy: Store → Region. This lets IQ aggregate data by region ("total sales in the northeast") and ensures region metadata is defined once, not duplicated across every store.
+```
 
 Next, we'll model how orders actually get delivered.

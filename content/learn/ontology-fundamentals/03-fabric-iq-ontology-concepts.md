@@ -65,7 +65,7 @@ Relationships connect entity types. Each relationship specifies:
 
 IQ uses cardinality to generate correct aggregations. A one-to-many relationship between `Customer` and `Order` means "count of orders per customer" is valid, while "count of customers per order" would typically be 1.
 
-<ontology-embed id="official/ecommerce" height="400px" />
+<ontology-embed id="official/ecommerce" height="400px"></ontology-embed>
 
 *The E-Commerce ontology demonstrates IQ-ready patterns: identifier properties on each entity, typed columns, and cardinality on every relationship.*
 
@@ -86,3 +86,21 @@ When building an ontology for Fabric IQ, follow these guidelines:
 - Every entity needs an identifier property for correct counting and joining
 - Good naming and descriptions improve IQ's question-answering accuracy
 - Use the [Ontology Designer](#/designer) to create IQ-ready ontologies visually
+
+```quiz
+Q: Why is an identifier property required on every entity type in Fabric IQ?
+- It makes the ontology look professional
+- It tells IQ how to count, group, and join entities correctly [correct]
+- It is used as the entity's display name
+- It sets the default sort order
+> The identifier property uniquely distinguishes instances of an entity type. Without it, IQ cannot correctly generate COUNT, GROUP BY, or JOIN operations in the translated SQL.
+```
+
+```quiz
+Q: What does the cardinality of a relationship tell Fabric IQ?
+- The colour to use when drawing the relationship
+- How many instances can connect on each side of the relationship [correct]
+- Whether the relationship is optional or required
+- The order in which entities should be displayed
+> Cardinality (one-to-one, one-to-many, many-to-one, many-to-many) tells IQ how to generate correct aggregations and joins — for example, knowing that one customer has many orders.
+```
