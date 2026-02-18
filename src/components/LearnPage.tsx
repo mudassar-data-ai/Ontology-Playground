@@ -434,14 +434,9 @@ function PresentationMode({
   const goNext = useCallback(() => {
     setSlideIndex((i) => {
       if (i < total - 1) return i + 1;
-      // On last slide, advance to next article
+      // On last slide, advance to next article with ?slide=1 so presentation auto-opens
       if (nextArticle) {
-        navigate({ page: 'learn', courseSlug, articleSlug: nextArticle.slug });
-        // Set ?slide=1 so presentation auto-opens on the new article
-        requestAnimationFrame(() => {
-          const base = window.location.hash.replace(/[?&]slide=\d+/, '');
-          history.replaceState(null, '', `${base}?slide=1`);
-        });
+        window.location.hash = `#/learn/${courseSlug}/${nextArticle.slug}?slide=1`;
       }
       return i;
     });
@@ -451,14 +446,8 @@ function PresentationMode({
       if (i > 0) return i - 1;
       // On first slide, go to previous article's last slide
       if (prevArticle) {
-        const prevSlides = splitIntoSlides(
-          prevArticle.html, prevArticle.title,
-        );
-        navigate({ page: 'learn', courseSlug, articleSlug: prevArticle.slug });
-        requestAnimationFrame(() => {
-          const base = window.location.hash.replace(/[?&]slide=\d+/, '');
-          history.replaceState(null, '', `${base}?slide=${prevSlides.length}`);
-        });
+        const prevSlides = splitIntoSlides(prevArticle.html, prevArticle.title);
+        window.location.hash = `#/learn/${courseSlug}/${prevArticle.slug}?slide=${prevSlides.length}`;
       }
       return i;
     });
