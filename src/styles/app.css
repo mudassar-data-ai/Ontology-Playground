@@ -980,7 +980,30 @@ body {
   z-index: 1000;
 }
 
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
 .modal-content {
+  position: relative;
   background: var(--bg-secondary);
   border-radius: var(--radius-xl);
   padding: 40px;
@@ -1236,23 +1259,7 @@ body {
   font-size: 18px;
 }
 
-.nl-builder-modal .modal-close {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.nl-builder-modal .modal-close:hover {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-}
+/* .modal-close base styles are now shared — no per-modal overrides needed */
 
 .nl-input-textarea {
   width: 100%;
@@ -2567,6 +2574,42 @@ body {
 .submit-error-text {
   color: var(--ms-red);
   font-size: 14px;
+}
+
+.submit-instructions {
+  margin-top: 4px;
+}
+
+.submit-instructions h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.submit-instructions ol {
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.submit-instructions ol a {
+  color: var(--ms-blue);
+}
+
+.submit-instructions code {
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 12px;
+  background: var(--bg-elevated);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.submit-download-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .submit-fallback {

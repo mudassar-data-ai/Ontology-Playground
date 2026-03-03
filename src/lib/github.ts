@@ -15,8 +15,11 @@
 const GITHUB_API = 'https://api.github.com';
 
 // In dev, Vite proxies /__github/* → github.com/*
-// In prod, Azure Function proxies /api/github-oauth/* → github.com/*
-const GITHUB_OAUTH_BASE = import.meta.env.DEV ? '/__github' : '/api/github-oauth';
+// In prod, use VITE_GITHUB_OAUTH_BASE if set (e.g. Cloudflare Worker),
+// otherwise fall back to Azure Function at /api/github-oauth.
+const GITHUB_OAUTH_BASE = import.meta.env.DEV
+  ? '/__github'
+  : (import.meta.env.VITE_GITHUB_OAUTH_BASE || '/api/github-oauth');
 
 // The upstream repo that the catalogue lives in.
 // Change these if the repo moves.

@@ -39,6 +39,8 @@ jobs:
         run: npm run build
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_GITHUB_CLIENT_ID: ${{ secrets.VITE_GITHUB_CLIENT_ID }}
+          VITE_GITHUB_OAUTH_BASE: ${{ secrets.VITE_GITHUB_OAUTH_BASE }}
 
       - name: Copy SPA fallback
         run: cp build/index.html build/404.html

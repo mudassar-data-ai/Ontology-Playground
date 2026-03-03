@@ -7,8 +7,6 @@ import { serializeToRDF } from '../../lib/rdf/serializer';
 import { navigate } from '../../lib/router';
 import { SubmitCatalogueModal } from './SubmitCatalogueModal';
 
-const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || '';
-
 /**
  * Toolbar buttons — rendered in the designer topbar.
  */
@@ -81,7 +79,7 @@ export function DesignerToolbar() {
         <button className="designer-toolbar-btn" onClick={handleLoadInPlayground} title="Load in Playground">
           <Upload size={14} /> Load in Playground
         </button>
-        <button className="designer-toolbar-btn submit" onClick={handleSubmitToCatalogue} title={!GITHUB_CLIENT_ID ? 'Download RDF to submit manually' : 'Submit as a pull request'}>
+        <button className="designer-toolbar-btn submit" onClick={handleSubmitToCatalogue} title="Submit to community catalogue">
           <Github size={14} /> Submit to Catalogue
         </button>
       </div>
