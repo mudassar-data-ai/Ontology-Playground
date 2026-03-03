@@ -1,5 +1,7 @@
 # Ontology Playground (Preview) ☕
 
+> Note: This project was developed with AI-assisted coding.
+
 A free, open-source web application for learning about ontologies and
 **Microsoft Fabric IQ**. Explore pre-built ontologies, design your own in a
 visual editor, export as RDF/XML, and share interactive diagrams — all from a
